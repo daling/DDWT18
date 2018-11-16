@@ -36,6 +36,30 @@ function connect_db($host, $database, $username, $password){
 }
 
 /**
+ * Counts the number of series in the database.
+ * @return int Number of series
+ */
+function count_series($pdo){
+    $stmt = $pdo->prepare("SELECT * FROM series");
+    $stmt->execute();
+    return $stmt->rowCount();
+}
+
+function get_series($pdo){
+    $stmt = $pdo->prepare('SELECT * FROM series');
+    $stmt->execute();
+    $series = $stmt->fetchAll();
+    $series_exp = Array();
+    /* Create array with htmlspecialchars */
+    foreach ($series as $key => $value){
+        foreach ($value as $user_key => $user_input) {
+            $series_exp[$key][$user_key] = htmlspecialchars($user_input);
+        }
+    }
+    return $series_exp;
+}
+
+/**
  * Check if the route exist
  * @param string $route_uri URI to be matched
  * @param string $request_type request method

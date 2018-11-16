@@ -26,6 +26,9 @@ if (new_route('/DDWT18/week1/', 'get')) {
         'Add Series' => na('/DDWT18/week1/add/', False)
     ]);
 
+    /* Get current nbr series */
+    $nbr_series = count_series($db);
+
     /* Page content */
     $right_column = use_template('cards');
     $page_subtitle = 'The online platform to list your favorite series';
