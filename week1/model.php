@@ -12,6 +12,30 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 /**
+ * Connect to a MYSQL database
+ * @param string $host
+ * @param string $database
+ * @param string $username
+ * @param string $password
+ * @return PDO
+ */
+function connect_db($host, $database, $username, $password){
+    $charset = 'utf8mb4';
+
+    $dsn = "mysql:host=$host;dbname=$database;charset=$charset";
+    $options = [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+    ];
+    try {
+        $pdo = new PDO($dsn, $username, $password, $options);
+    } catch (\PDOException $e) {
+        echo sprintf("Failed to connect. %s",$e->getMessage());
+    }
+    return $pdo;
+}
+
+/**
  * Check if the route exist
  * @param string $route_uri URI to be matched
  * @param string $request_type request method
