@@ -45,6 +45,11 @@ function count_series($pdo){
     return $stmt->rowCount();
 }
 
+/**
+ * Get the series from the table in an array.
+ * @param $pdo
+ * @return array
+ */
 function get_series($pdo){
     $stmt = $pdo->prepare('SELECT * FROM series');
     $stmt->execute();
@@ -57,6 +62,36 @@ function get_series($pdo){
         }
     }
     return $series_exp;
+}
+
+/**
+ * Gets the series and puts it in 
+ * @param $series
+ * @return string The table.
+ */
+function get_serie_table($series){
+    $table_exp = '
+    <table class="table table-hover">
+    <thead
+    <tr>
+    <th scope="col">Series</th>
+    <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody>';
+    foreach($series as $key => $value){
+        $table_exp .= '
+        <tr>
+        <th scope="row">'.$value['name'].'</th>
+        <td><a href="/DDWT18/week1/serie/?serie_id='.$value['id'].'" role="button" class="btn btn-primary">More info</a></td>
+        </tr>
+        ';
+    }
+    $table_exp .= '
+    </tbody>
+    </table>
+    ';
+    return $table_exp;
 }
 
 /**
