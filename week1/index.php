@@ -11,6 +11,9 @@ include 'model.php';
 /* Connect to DB */
 $db = connect_db('localhost','ddwt18_week1','ddwt18','ddwt18');
 
+/* Get current nbr series */
+$nbr_series = count_series($db);
+
 /* Landing page */
 if (new_route('/DDWT18/week1/', 'get')) {
     /* Page info */
@@ -25,9 +28,6 @@ if (new_route('/DDWT18/week1/', 'get')) {
         'Overview' => na('/DDWT18/week1/overview/', False),
         'Add Series' => na('/DDWT18/week1/add/', False)
     ]);
-
-    /* Get current nbr series */
-    $nbr_series = count_series($db);
 
     /* Page content */
     $right_column = use_template('cards');
@@ -66,10 +66,12 @@ elseif (new_route('/DDWT18/week1/overview/', 'get')) {
 /* Single Serie */
 elseif (new_route('/DDWT18/week1/serie/', 'get')) {
     /* Get series from db */
-    $serie_name = 'House of Cards';
-    $serie_abstract = 'A Congressman works with his equally conniving wife to exact revenge on the people who betrayed him.';
-    $nbr_seasons = '6';
-    $creators = 'Beau Willimon';
+    $serie_id = $_GET['serie_id'];
+    $serie = get_series_info($db, $serie_id);
+    $serie_name = $serie['name'];
+    $serie_abstract = $serie['abstract'];
+    $nbr_seasons = $serie['seasons'];
+    $creators = $serie['creator'];
 
     /* Page info */
     $page_title = $serie_name;

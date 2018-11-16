@@ -65,7 +65,20 @@ function get_series($pdo){
 }
 
 /**
- * Gets the series and puts it in 
+ * Gets one serie by its id.
+ * @param $pdo
+ * @param $id
+ * @return mixed
+ */
+function get_series_info($pdo, $id){
+    $stmt = $pdo->prepare("SELECT * FROM series WHERE id = '$id'");
+    $stmt->execute();
+    $serie = $stmt->fetch();
+    return $serie;
+}
+
+/**
+ * Gets the series and puts it in
  * @param $series
  * @return string The table.
  */
