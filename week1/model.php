@@ -108,6 +108,56 @@ function get_serie_table($series){
 }
 
 /**
+ * Adds a series to the database after checking if all the fields were correctly filled.
+ * @param $pdo
+ * @param $serie_info
+ * @return array Feedback about the operation.
+ */
+function add_series($pdo, $serie_info){
+    if (empty($serie_info['Name'])) {
+        $feedback = ['type'=>'danger', 'message'=>'Name field empty. Series not added.'];
+    } elseif (empty($serie_info['Creator'])) {
+        $feedback = ['type'=>'danger', 'message'=>'Creator field empty. Series not added.'];
+    } elseif (empty($serie_info['Seasons'])) {
+        $feedback = ['type'=>'danger', 'message'=>'Seasons field empty. Series not added.'];
+    } elseif (!is_numeric($serie_info['Seasons'])) {
+        $feedback = ['type'=>'danger', 'message'=>'Seasons field is not numeric. Series not added.'];
+    } elseif (empty($serie_info['Abstract'])) {
+        $feedback = ['type'=>'danger', 'message'=>'Abstract field empty. Series not added.'];
+    } elseif (check_series_name($pdo, $serie_info['Name'])) {
+        $feedback = ['type'=>'danger', 'message'=>'Series name already in database. Series not added.'];
+    } else {
+        $stmt = $pdo->prepare("INSERT INTO series (name, creator, seasons, abstract) VALUES (?, ?, ?, ?)");
+        $stmt->execute([
+            $serie_info['Name'],
+            $serie_info['Creator'],
+            $serie_info['Seasons'],
+            $serie_info['Abstract']
+        ]);
+        $inserted = $stmt->rowCount();
+        if ($inserted == 1) {
+            $feedback = ['type'=>'success', 'message'=>'Series successfully added.'];
+        } else {
+            $feedback = ['type' => 'danger', 'message' => 'Error, series not added. Please try again.'];
+        }
+    }
+    return $feedback;
+}
+
+/**
+ * Check if a series with a specified name is in the database.
+ * @param $pdo
+ * @param $name
+ * @return bool True if already in database, else false.
+ */
+function check_series_name($pdo, $name) {
+    $stmt = $pdo->prepare("SELECT * FROM series WHERE name = '$name'");
+    $stmt->execute();
+    $serie = $stmt->fetch();
+    return ($serie ? True : False);
+}
+
+/**
  * Check if the route exist
  * @param string $route_uri URI to be matched
  * @param string $request_type request method
