@@ -38,25 +38,30 @@
                         <div class="form-group row">
                             <label for="inputName" class="col-sm-2 col-form-label">Name</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="inputName" name="Name" required>
+                                <input type="text" class="form-control" id="inputName" name="Name" required
+                                       value="<?php if (isset($series_info)) {echo $series_info['name'];} ?>">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="inputCreator" class="col-sm-2 col-form-label">Creator</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="inputCreator" name="Creator" required>
+                                <input type="text" class="form-control" id="inputCreator" name="Creator" required
+                                       value="<?php if (isset($series_info)) {echo $series_info['creator'];} ?>">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="inputSeasons" class="col-sm-2 col-form-label">Seasons</label>
                             <div class="col-sm-10">
-                                <input type="number" class="form-control" id="inputSeasons" name="Seasons" required>
+                                <input type="number" class="form-control" id="inputSeasons" name="Seasons" required
+                                       value="<?php if (isset($series_info)) {echo $series_info['seasons'];} ?>">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="inputAbstract" class="col-sm-2 col-form-label">Abstract</label>
                             <div class="col-sm-10">
-                                <textarea class="form-control" id="inputAbstract" name="Abstract" required></textarea>
+                                <textarea class="form-control" id="inputAbstract" name="Abstract" required><?php
+                                    if (isset($series_info)) {echo $series_info['abstract'];} ?>
+                                </textarea>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary"><?= $submit_btn ?></button>

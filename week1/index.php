@@ -66,12 +66,12 @@ elseif (new_route('/DDWT18/week1/overview/', 'get')) {
 /* Single Serie */
 elseif (new_route('/DDWT18/week1/serie/', 'get')) {
     /* Get series from db */
-    $serie_id = $_GET['serie_id'];
-    $serie = get_series_info($db, $serie_id);
-    $serie_name = $serie['name'];
-    $serie_abstract = $serie['abstract'];
-    $nbr_seasons = $serie['seasons'];
-    $creators = $serie['creator'];
+    $series_id = $_GET['serie_id'];
+    $series_info = get_series_info($db, $series_id);
+    $serie_name = $series_info['name'];
+    $serie_abstract = $series_info['abstract'];
+    $nbr_seasons = $series_info['seasons'];
+    $creators = $series_info['creator'];
 
     /* Page info */
     $page_title = $serie_name;
@@ -125,8 +125,8 @@ elseif (new_route('/DDWT18/week1/add/', 'get')) {
 /* Add serie POST */
 elseif (new_route('/DDWT18/week1/add/', 'post')) {
     /* Add series to database */
-    $serie_info = ['Name'=>$_POST['Name'], 'Creator'=>$_POST['Creator'], 'Seasons'=>$_POST['Seasons'], 'Abstract'=>$_POST['Abstract']];
-    $feedback = add_series($db, $serie_info);
+    $series_info = ['Name'=>$_POST['Name'], 'Creator'=>$_POST['Creator'], 'Seasons'=>$_POST['Seasons'], 'Abstract'=>$_POST['Abstract']];
+    $feedback = add_series($db, $series_info);
     $error_msg = get_error($feedback);
 
     /* Page info */
@@ -155,10 +155,14 @@ elseif (new_route('/DDWT18/week1/add/', 'post')) {
 /* Edit serie GET */
 elseif (new_route('/DDWT18/week1/edit/', 'get')) {
     /* Get serie info from db */
-    $serie_name = 'House of Cards';
-    $serie_abstract = 'A Congressman works with his equally conniving wife to exact revenge on the people who betrayed him.';
-    $nbr_seasons = '6';
-    $creators = 'Beau Willimon';
+    $series_id = $_GET['serie_id'];
+    $series_info = get_series_info($db, $series_id);
+    $serie_name = $series_info['name'];
+    $serie_abstract = $series_info['abstract'];
+    $nbr_seasons = $series_info['seasons'];
+    $creators = $series_info['creator'];
+    $submit_btn = "Edit Series";
+    $form_action = '/DDWT18/week1/edit/';
 
     /* Page info */
     $page_title = 'Edit Series';
