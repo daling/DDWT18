@@ -188,14 +188,22 @@ elseif (new_route('/DDWT18/week1/edit/', 'get')) {
 
 /* Edit serie POST */
 elseif (new_route('/DDWT18/week1/edit/', 'post')) {
-    /* Get serie info from db */
-    $serie_name = 'House of Cards';
-    $serie_abstract = 'A Congressman works with his equally conniving wife to exact revenge on the people who betrayed him.';
-    $nbr_seasons = '6';
-    $creators = 'Beau Willimon';
+    /* Get info from form */
+    $series_info = ['Name'=>$_POST['Name'], 'Creator'=>$_POST['Creator'], 'Seasons'=>$_POST['Seasons'],
+        'Abstract'=>$_POST['Abstract'], 'serie_id'=>$_POST['serie_id']];
+    $feedback = update_series($db, $series_info);
+    $error_msg = get_error($feedback);
+
+    /* Get updated series info from db */
+    $serie_id = $series_info['serie_id'];
+    $series_info_exp = get_series_info($db, $serie_id);
+    $serie_name = $series_info_exp['name'];
+    $serie_abstract = $series_info_exp['abstract'];
+    $nbr_seasons = $series_info_exp['seasons'];
+    $creators = $series_info_exp['creator'];
 
     /* Page info */
-    $page_title = $serie_info['name'];
+    $page_title = $series_info_exp['name'];
     $breadcrumbs = get_breadcrumbs([
         'DDWT18' => na('/DDWT18/', False),
         'Week 1' => na('/DDWT18/week1/', False),
@@ -211,7 +219,7 @@ elseif (new_route('/DDWT18/week1/edit/', 'post')) {
     /* Page content */
     $right_column = use_template('cards');
     $page_subtitle = sprintf("Information about %s", $serie_name);
-    $page_content = $serie_info['abstract'];
+    $page_content = $series_info_exp['abstract'];
 
     /* Choose Template */
     include use_template('serie');

@@ -145,17 +145,57 @@ function add_series($pdo, $serie_info){
 }
 
 /**
- * Check if a series with a specified name is in the database.
+ * Check if a series with a specified name is in the database and returns the series ID if it does.
  * @param $pdo
  * @param $name
- * @return bool True if already in database, else false.
+ * @return bool Series ID if already in database, else false.
  */
 function check_series_name($pdo, $name) {
     $stmt = $pdo->prepare("SELECT * FROM series WHERE name = '$name'");
     $stmt->execute();
     $serie = $stmt->fetch();
-    return ($serie ? True : False);
+    return ($serie ? $serie['id'] : False);
 }
+
+/**
+ * Update a serie in the database after checking if all the fields were correctly filled.
+ * Also checks if a name already occurs in the database by comparing the ID with the output from check_series_name().
+ * @param $pdo
+ * @param $serie_info
+ * @return array Feedback about the operation.
+ */
+function update_series($pdo, $serie_info){
+    if (empty($serie_info['Name'])) {
+        $feedback = ['type'=>'danger', 'message'=>'Name field empty. Series not updated.'];
+    } elseif (empty($serie_info['Creator'])) {
+        $feedback = ['type'=>'danger', 'message'=>'Creator field empty. Series not updated.'];
+    } elseif (empty($serie_info['Seasons'])) {
+        $feedback = ['type'=>'danger', 'message'=>'Seasons field empty. Series not updated.'];
+    } elseif (!is_numeric($serie_info['Seasons'])) {
+        $feedback = ['type'=>'danger', 'message'=>'Seasons field is not numeric. Series not updated.'];
+    } elseif (empty($serie_info['Abstract'])) {
+        $feedback = ['type'=>'danger', 'message'=>'Abstract field empty. Series not updated.'];
+    } elseif (check_series_name($pdo, $serie_info['Name']) != $serie_info['serie_id'] ) {
+        $feedback = ['type'=>'danger', 'message'=>'Series name already in database. Series not updated.'];
+    } else {
+        $stmt = $pdo->prepare("UPDATE series SET name = ?, creator = ?, seasons = ?, abstract = ? WHERE id = ?");
+        $stmt->execute([
+            $serie_info['Name'],
+            $serie_info['Creator'],
+            $serie_info['Seasons'],
+            $serie_info['Abstract'],
+            $serie_info['serie_id']
+        ]);
+        $inserted = $stmt->rowCount();
+        if ($inserted == 1) {
+            $feedback = ['type'=>'success', 'message'=>'Series successfully updated.'];
+        } else {
+            $feedback = ['type' => 'danger', 'message' => 'Error, series not updated. Please try again.'];
+        }
+    }
+    return $feedback;
+}
+
 
 /**
  * Check if the route exist
