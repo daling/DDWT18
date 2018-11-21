@@ -196,6 +196,24 @@ function update_series($pdo, $serie_info){
     return $feedback;
 }
 
+/**
+ * Removes a series from the database.
+ * @param $pdo
+ * @param $serie_info
+ * @param $serie_id
+ * @return array Feedback about the operation.
+ */
+function remove_serie($pdo, $serie_info, $serie_id) {
+    $stmt = $pdo->prepare("DELETE FROM series WHERE id = ?");
+    $stmt->execute([$serie_id]);
+    $deleted = $stmt->rowCount();
+    if ($deleted == 1) {
+        return [ 'type' => 'success', 'message' => sprintf("Series '%s' was removed!", $serie_info['name']];
+    }
+    else {
+        return [ 'type' => 'warning', 'message' => 'Error occurred. Series was not removed.'];
+    }
+}
 
 /**
  * Check if the route exist

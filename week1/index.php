@@ -229,7 +229,8 @@ elseif (new_route('/DDWT18/week1/edit/', 'post')) {
 elseif (new_route('/DDWT18/week1/remove/', 'post')) {
     /* Remove serie in database */
     $serie_id = $_POST['serie_id'];
-    $feedback = remove_serie($db, $serie_id);
+    $serie_info = get_series_info($db, $serie_id);
+    $feedback = remove_serie($db, $serie_info, $serie_id);
     $error_msg = get_error($feedback);
 
     /* Page info */
@@ -249,27 +250,7 @@ elseif (new_route('/DDWT18/week1/remove/', 'post')) {
     $right_column = use_template('cards');
     $page_subtitle = 'The overview of all series';
     $page_content = 'Here you find all series listed on Series Overview.';
-    $left_content = '
-    <table class="table table-hover">
-        <thead>
-        <tr>
-            <th scope="col">Series</th>
-            <th scope="col"></th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <th scope="row">House of Cards</th>
-            <td><a href="/DDWT18/week1/serie/" role="button" class="btn btn-primary">More info</a></td>
-        </tr>
-
-        <tr>
-            <th scope="row">Game of Thrones</th>
-            <td><a href="/DDWT18/week1/serie/" role="button" class="btn btn-primary">More info</a></td>
-        </tr>
-
-        </tbody>
-    </table>';
+    $left_content = get_serie_table(get_series($db));
 
     /* Choose Template */
     include use_template('main');
