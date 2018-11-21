@@ -1,9 +1,9 @@
 <?php
 /**
  * Model
- * User: reinardvandalen
- * Date: 05-11-18
- * Time: 15:25
+ * Derived from model.php by user: reinardvandalen
+ * Author: Rolf Daling, s2344343
+ * Date: 18-11-18
  */
 
 /* Enable error reporting */

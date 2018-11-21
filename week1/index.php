@@ -1,9 +1,9 @@
 <?php
 /**
  * Controller
- * User: reinardvandalen
- * Date: 05-11-18
- * Time: 15:25
+ * Derived from index.php by user: reinardvandalen
+ * Author: Rolf Daling, s2344343
+ * Date: 18-11-18
  */
 
 include 'model.php';
@@ -66,12 +66,12 @@ elseif (new_route('/DDWT18/week1/overview/', 'get')) {
 /* Single Serie */
 elseif (new_route('/DDWT18/week1/serie/', 'get')) {
     /* Get series from db */
-    $series_id = $_GET['serie_id'];
-    $series_info = get_series_info($db, $series_id);
-    $serie_name = $series_info['name'];
-    $serie_abstract = $series_info['abstract'];
-    $nbr_seasons = $series_info['seasons'];
-    $creators = $series_info['creator'];
+    $serie_id = $_GET['serie_id'];
+    $serie = get_series_info($db, $serie_id);
+    $serie_name = $serie['name'];
+    $serie_abstract = $serie['abstract'];
+    $nbr_seasons = $serie['seasons'];
+    $creators = $serie['creator'];
 
     /* Page info */
     $page_title = $serie_name;
@@ -125,8 +125,8 @@ elseif (new_route('/DDWT18/week1/add/', 'get')) {
 /* Add serie POST */
 elseif (new_route('/DDWT18/week1/add/', 'post')) {
     /* Add series to database */
-    $series_info = ['Name'=>$_POST['Name'], 'Creator'=>$_POST['Creator'], 'Seasons'=>$_POST['Seasons'], 'Abstract'=>$_POST['Abstract']];
-    $feedback = add_series($db, $series_info);
+    $serie_info = ['Name'=>$_POST['Name'], 'Creator'=>$_POST['Creator'], 'Seasons'=>$_POST['Seasons'], 'Abstract'=>$_POST['Abstract']];
+    $feedback = add_series($db, $serie_info);
     $error_msg = get_error($feedback);
 
     /* Page info */
@@ -155,8 +155,8 @@ elseif (new_route('/DDWT18/week1/add/', 'post')) {
 /* Edit serie GET */
 elseif (new_route('/DDWT18/week1/edit/', 'get')) {
     /* Get serie info from db */
-    $series_id = $_GET['serie_id'];
-    $series_info = get_series_info($db, $series_id);
+    $serie_id = $_GET['serie_id'];
+    $series_info = get_series_info($db, $serie_id);
     $serie_name = $series_info['name'];
     $serie_abstract = $series_info['abstract'];
     $nbr_seasons = $series_info['seasons'];
