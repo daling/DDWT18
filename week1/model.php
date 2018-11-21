@@ -12,7 +12,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 /**
- * Connect to a MYSQL database
+ * Connect to a MYSQL database.
  * @param string $host
  * @param string $database
  * @param string $username
@@ -37,6 +37,7 @@ function connect_db($host, $database, $username, $password){
 
 /**
  * Counts the number of series in the database.
+ * @param $pdo PDO Database connection
  * @return int Number of series
  */
 function count_series($pdo){
@@ -47,8 +48,8 @@ function count_series($pdo){
 
 /**
  * Get the series from the table in an array.
- * @param $pdo
- * @return array
+ * @param $pdo PDO Database connection
+ * @return array All series in the database.
  */
 function get_series($pdo){
     $stmt = $pdo->prepare('SELECT * FROM series');
@@ -66,9 +67,9 @@ function get_series($pdo){
 
 /**
  * Gets one serie by its id.
- * @param $pdo
- * @param $id
- * @return mixed
+ * @param $pdo PDO Database connection
+ * @param $id Series id
+ * @return array Series info
  */
 function get_series_info($pdo, $id){
     $stmt = $pdo->prepare("SELECT * FROM series WHERE id = '$id'");
@@ -78,9 +79,9 @@ function get_series_info($pdo, $id){
 }
 
 /**
- * Gets the series and puts it in
- * @param $series
- * @return string The table.
+ * Gets the series and puts it in a table.
+ * @param $series array series in the table
+ * @return string html output for the table
  */
 function get_serie_table($series){
     $table_exp = '
@@ -109,23 +110,23 @@ function get_serie_table($series){
 
 /**
  * Adds a series to the database after checking if all the fields were correctly filled.
- * @param $pdo
- * @param $serie_info
+ * @param $pdo PDO Database connection
+ * @param $serie_info array Series info to be added.
  * @return array Feedback about the operation.
  */
 function add_series($pdo, $serie_info){
     if (empty($serie_info['Name'])) {
-        $feedback = ['type'=>'danger', 'message'=>'Name field empty. Series not added.'];
+        return ['type'=>'danger', 'message'=>'Name field empty. Series not added.'];
     } elseif (empty($serie_info['Creator'])) {
-        $feedback = ['type'=>'danger', 'message'=>'Creator field empty. Series not added.'];
+        return ['type'=>'danger', 'message'=>'Creator field empty. Series not added.'];
     } elseif (empty($serie_info['Seasons'])) {
-        $feedback = ['type'=>'danger', 'message'=>'Seasons field empty. Series not added.'];
+        return ['type'=>'danger', 'message'=>'Seasons field empty. Series not added.'];
     } elseif (!is_numeric($serie_info['Seasons'])) {
-        $feedback = ['type'=>'danger', 'message'=>'Seasons field is not numeric. Series not added.'];
+        return ['type'=>'danger', 'message'=>'Seasons field is not numeric. Series not added.'];
     } elseif (empty($serie_info['Abstract'])) {
-        $feedback = ['type'=>'danger', 'message'=>'Abstract field empty. Series not added.'];
+        return ['type'=>'danger', 'message'=>'Abstract field empty. Series not added.'];
     } elseif (check_series_name($pdo, $serie_info['Name'])) {
-        $feedback = ['type'=>'danger', 'message'=>'Series name already in database. Series not added.'];
+        return ['type'=>'danger', 'message'=>'Series name already in database. Series not added.'];
     } else {
         $stmt = $pdo->prepare("INSERT INTO series (name, creator, seasons, abstract) VALUES (?, ?, ?, ?)");
         $stmt->execute([
@@ -136,19 +137,17 @@ function add_series($pdo, $serie_info){
         ]);
         $inserted = $stmt->rowCount();
         if ($inserted == 1) {
-            $feedback = ['type'=>'success', 'message'=>'Series successfully added.'];
-        } else {
-            $feedback = ['type' => 'danger', 'message' => 'Error, series not added. Please try again.'];
+            return ['type' => 'success', 'message' => sprintf("Series '%s' added!", $serie_info['Name'])];
         }
     }
-    return $feedback;
+    return ['type' => 'danger', 'message' => 'Error, series not added. Please try again.'];
 }
 
 /**
  * Check if a series with a specified name is in the database and returns the series ID if it does.
- * @param $pdo
- * @param $name
- * @return bool Series ID if already in database, else false.
+ * @param $pdo PDO Database connection
+ * @param $name string Series name.
+ * @return mixed Series ID if already in database, else false.
  */
 function check_series_name($pdo, $name) {
     $stmt = $pdo->prepare("SELECT * FROM series WHERE name = '$name'");
@@ -160,23 +159,23 @@ function check_series_name($pdo, $name) {
 /**
  * Update a serie in the database after checking if all the fields were correctly filled.
  * Also checks if a name already occurs in the database by comparing the ID with the output from check_series_name().
- * @param $pdo
- * @param $serie_info
+ * @param $pdo PDO database connection
+ * @param $serie_info array Series updated information.
  * @return array Feedback about the operation.
  */
 function update_series($pdo, $serie_info){
     if (empty($serie_info['Name'])) {
-        $feedback = ['type'=>'danger', 'message'=>'Name field empty. Series not updated.'];
+        return ['type'=>'danger', 'message'=>'Name field empty. Series not updated.'];
     } elseif (empty($serie_info['Creator'])) {
-        $feedback = ['type'=>'danger', 'message'=>'Creator field empty. Series not updated.'];
+        return ['type'=>'danger', 'message'=>'Creator field empty. Series not updated.'];
     } elseif (empty($serie_info['Seasons'])) {
-        $feedback = ['type'=>'danger', 'message'=>'Seasons field empty. Series not updated.'];
+        return ['type'=>'danger', 'message'=>'Seasons field empty. Series not updated.'];
     } elseif (!is_numeric($serie_info['Seasons'])) {
-        $feedback = ['type'=>'danger', 'message'=>'Seasons field is not numeric. Series not updated.'];
+        return ['type'=>'danger', 'message'=>'Seasons field is not numeric. Series not updated.'];
     } elseif (empty($serie_info['Abstract'])) {
-        $feedback = ['type'=>'danger', 'message'=>'Abstract field empty. Series not updated.'];
+        return ['type'=>'danger', 'message'=>'Abstract field empty. Series not updated.'];
     } elseif (check_series_name($pdo, $serie_info['Name']) != $serie_info['serie_id'] ) {
-        $feedback = ['type'=>'danger', 'message'=>'Series name already in database. Series not updated.'];
+        return ['type'=>'danger', 'message'=>'Series name already in database. Series not updated.'];
     } else {
         $stmt = $pdo->prepare("UPDATE series SET name = ?, creator = ?, seasons = ?, abstract = ? WHERE id = ?");
         $stmt->execute([
@@ -188,19 +187,17 @@ function update_series($pdo, $serie_info){
         ]);
         $inserted = $stmt->rowCount();
         if ($inserted == 1) {
-            $feedback = ['type'=>'success', 'message'=>'Series successfully updated.'];
-        } else {
-            $feedback = ['type' => 'danger', 'message' => 'Error, series not updated. Please try again.'];
+            return ['type' => 'success', 'message' => sprintf("Series '%s' was updated!", $serie_info['Name'])];
         }
     }
-    return $feedback;
+    return ['type' => 'danger', 'message' => 'Error, series not updated. Please try again.'];
 }
 
 /**
  * Removes a series from the database.
- * @param $pdo
- * @param $serie_info
- * @param $serie_id
+ * @param $pdo PDO Database connection
+ * @param $serie_info array Series information.
+ * @param $serie_id int Series id.
  * @return array Feedback about the operation.
  */
 function remove_serie($pdo, $serie_info, $serie_id) {
@@ -208,11 +205,9 @@ function remove_serie($pdo, $serie_info, $serie_id) {
     $stmt->execute([$serie_id]);
     $deleted = $stmt->rowCount();
     if ($deleted == 1) {
-        return [ 'type' => 'success', 'message' => sprintf("Series '%s' was removed!", $serie_info['name']];
+        return [ 'type' => 'success', 'message' => sprintf("Series '%s' was removed!", $serie_info['name'])];
     }
-    else {
-        return [ 'type' => 'warning', 'message' => 'Error occurred. Series was not removed.'];
-    }
+    return [ 'type' => 'warning', 'message' => 'Error occurred. Series was not removed.'];
 }
 
 /**

@@ -11,11 +11,11 @@ include 'model.php';
 /* Connect to DB */
 $db = connect_db('localhost','ddwt18_week1','ddwt18','ddwt18');
 
-/* Get current nbr series */
-$nbr_series = count_series($db);
-
 /* Landing page */
 if (new_route('/DDWT18/week1/', 'get')) {
+    /* Get current nbr series */
+    $nbr_series = count_series($db);
+
     /* Page info */
     $page_title = 'Home';
     $breadcrumbs = get_breadcrumbs([
@@ -40,6 +40,9 @@ if (new_route('/DDWT18/week1/', 'get')) {
 
 /* Overview page */
 elseif (new_route('/DDWT18/week1/overview/', 'get')) {
+    /* Get current nbr series */
+    $nbr_series = count_series($db);
+
     /* Page info */
     $page_title = 'Overview';
     $breadcrumbs = get_breadcrumbs([
@@ -65,6 +68,9 @@ elseif (new_route('/DDWT18/week1/overview/', 'get')) {
 
 /* Single Serie */
 elseif (new_route('/DDWT18/week1/serie/', 'get')) {
+    /* Get current nbr series */
+    $nbr_series = count_series($db);
+
     /* Get series from db */
     $serie_id = $_GET['serie_id'];
     $serie = get_series_info($db, $serie_id);
@@ -98,6 +104,9 @@ elseif (new_route('/DDWT18/week1/serie/', 'get')) {
 
 /* Add serie GET */
 elseif (new_route('/DDWT18/week1/add/', 'get')) {
+    /* Get current nbr series */
+    $nbr_series = count_series($db);
+
     /* Page info */
     $page_title = 'Add Series';
     $breadcrumbs = get_breadcrumbs([
@@ -128,6 +137,9 @@ elseif (new_route('/DDWT18/week1/add/', 'post')) {
     $serie_info = ['Name'=>$_POST['Name'], 'Creator'=>$_POST['Creator'], 'Seasons'=>$_POST['Seasons'], 'Abstract'=>$_POST['Abstract']];
     $feedback = add_series($db, $serie_info);
     $error_msg = get_error($feedback);
+
+    /* Get current nbr series */
+    $nbr_series = count_series($db);
 
     /* Page info */
     $page_title = 'Add Series';
@@ -164,6 +176,9 @@ elseif (new_route('/DDWT18/week1/edit/', 'get')) {
     $submit_btn = "Edit Series";
     $form_action = '/DDWT18/week1/edit/';
 
+    /* Get current nbr series */
+    $nbr_series = count_series($db);
+
     /* Page info */
     $page_title = 'Edit Series';
     $breadcrumbs = get_breadcrumbs([
@@ -193,6 +208,9 @@ elseif (new_route('/DDWT18/week1/edit/', 'post')) {
         'Abstract'=>$_POST['Abstract'], 'serie_id'=>$_POST['serie_id']];
     $feedback = update_series($db, $series_info);
     $error_msg = get_error($feedback);
+
+    /* Get current nbr series */
+    $nbr_series = count_series($db);
 
     /* Get updated series info from db */
     $serie_id = $series_info['serie_id'];
@@ -232,6 +250,9 @@ elseif (new_route('/DDWT18/week1/remove/', 'post')) {
     $serie_info = get_series_info($db, $serie_id);
     $feedback = remove_serie($db, $serie_info, $serie_id);
     $error_msg = get_error($feedback);
+
+    /* Get current nbr series */
+    $nbr_series = count_series($db);
 
     /* Page info */
     $page_title = 'Overview';
