@@ -51,6 +51,17 @@ function new_route($route_uri, $request_type){
 }
 
 /**
+ * Gets the users first and lastname from the db by its id.
+ */
+function get_username($pdo, $id){
+    $stmt = $pdo->prepare('SELECT * FROM users WHERE id = ?');
+    $stmt->execute([$id]);
+    $user = $stmt->fetch();
+    $username = ['firstname' => $user['firstname'], 'lastname' => $user['lastname']];
+    return $username;
+}
+
+/**
  * Creates a new navigation array item using url and active status
  * @param string $url The url of the navigation item
  * @param bool $active Set the navigation item to active or inactive
