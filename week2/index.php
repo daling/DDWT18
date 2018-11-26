@@ -71,6 +71,7 @@ elseif (new_route('/DDWT18/week2/overview/', 'get')) {
     $page_content = 'Here you find all series listed on Series Overview.';
     $left_content = get_serie_table($db, get_series($db));
 
+
     /* Choose Template */
     include use_template('main');
 }
@@ -96,6 +97,11 @@ elseif (new_route('/DDWT18/week2/serie/', 'get')) {
     $page_content = $serie_info['abstract'];
     $nbr_seasons = $serie_info['seasons'];
     $creators = $serie_info['creator'];
+
+    /* Get error message from POST route */
+    if ( isset($_GET['error_msg'])) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
 
     /* Choose Template */
     include use_template('serie');
@@ -175,7 +181,7 @@ elseif (new_route('/DDWT18/week2/edit/', 'post')) {
     $feedback = update_serie($db, $_POST);
 
     /* Redirect to serie GET route */
-    redirect(sprintf('/DDWT18/week2/serie/?serie_id%s?error_msg=%s', $serie_id, json_encode($feedback)));
+    redirect(sprintf('/DDWT18/week2/serie/?serie_id='.$nbr_series.'?error_msg=%s', json_encode($feedback)));
 }
 
 /* Remove serie */
