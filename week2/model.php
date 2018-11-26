@@ -105,7 +105,8 @@ function get_breadcrumbs($breadcrumbs) {
 
 /**
  * Creates navigation HTML code using given array
- * @param array $navigation Array with as Key the page name and as Value the corresponding url
+ * @param array $template Array with as Key the page id and as Value the corresponding array with the url and name
+ * @param int $active_id The page id that is shown as active.
  * @return string html code that represents the navigation
  */
 function get_navigation($template, $active_id){
