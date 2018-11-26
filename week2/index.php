@@ -186,30 +186,12 @@ elseif (new_route('/DDWT18/week2/edit/', 'post')) {
 
 /* Remove serie */
 elseif (new_route('/DDWT18/week2/remove/', 'post')) {
-    /* Remove serie in database */
-    $serie_id = $_POST['serie_id'];
-    $feedback = remove_serie($db, $serie_id);
-    $error_msg = get_error($feedback);
+    /* Update serie to database */
+    $feedback = remove_serie($db, $_POST);
 
-    /* Get Number of Series */
-    $nbr_series = count_series($db);
+    /* Redirect to serie GET route */
+    redirect(sprintf('/DDWT18/week2/overview/?error_msg=%s', json_encode($feedback)));
 
-    /* Page info */
-    $page_title = 'Overview';
-    $breadcrumbs = get_breadcrumbs([
-        'DDWT18' => na('/DDWT18/', False),
-        'Week 2' => na('/DDWT18/week2/', False),
-        'Overview' => na('/DDWT18/week2/overview', True)
-    ]);
-    $navigation = get_navigation($navigation_elements, 2);
-
-    /* Page content */
-    $page_subtitle = 'The overview of all series';
-    $page_content = 'Here you find all series listed on Series Overview.';
-    $left_content = get_serie_table($db, get_series($db));
-
-    /* Choose Template */
-    include use_template('main');
 }
 
 else {
