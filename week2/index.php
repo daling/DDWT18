@@ -118,35 +118,22 @@ elseif (new_route('/DDWT18/week2/add/', 'get')) {
     $submit_btn = "Add Series";
     $form_action = '/DDWT18/week2/add/';
 
+    /* Get error message from POST route */
+    if ( isset($_GET['error_msg'])) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
     /* Choose Template */
     include use_template('new');
 }
 
 /* Add serie POST */
 elseif (new_route('/DDWT18/week2/add/', 'post')) {
-    /* Page info */
-    $page_title = 'Add Series';
-    $breadcrumbs = get_breadcrumbs([
-        'DDWT18' => na('/DDWT18/', False),
-        'Week 2' => na('/DDWT18/week2/', False),
-        'Add Series' => na('/DDWT18/week2/add/', True)
-    ]);
-    $navigation = get_navigation($navigation_elements, 3);
-
-    /* Page content */
-    $page_subtitle = 'Add your favorite series';
-    $page_content = 'Fill in the details of you favorite series.';
-    $submit_btn = "Add Series";
-    $form_action = '/DDWT18/week2/add/';
-
     /* Add serie to database */
     $feedback = add_serie($db, $_POST);
-    $error_msg = get_error($feedback);
 
-    /* Get Number of Series */
-    $nbr_series = count_series($db);
-
-    include use_template('new');
+    /* Redirect to serie GET route */
+    redirect(sprintf('/DDWT18/week2/add/?error_msg=%s', json_encode($feedback)));
 }
 
 /* Edit serie GET */
@@ -170,38 +157,25 @@ elseif (new_route('/DDWT18/week2/edit/', 'get')) {
     $submit_btn = "Edit Series";
     $form_action = '/DDWT18/week2/edit/';
 
+    /* Get error message from POST route */
+    if ( isset($_GET['error_msg'])) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
     /* Choose Template */
     include use_template('new');
 }
 
 /* Edit serie POST */
 elseif (new_route('/DDWT18/week2/edit/', 'post')) {
-    /* Update serie in database */
-    $feedback = update_serie($db, $_POST);
-    $error_msg = get_error($feedback);
-
     /* Get serie info from db */
     $serie_id = $_POST['serie_id'];
-    $serie_info = get_serieinfo($db, $serie_id);
 
-    /* Page info */
-    $page_title = $serie_info['name'];
-    $breadcrumbs = get_breadcrumbs([
-        'DDWT18' => na('/DDWT18/', False),
-        'Week 2' => na('/DDWT18/week2/', False),
-        'Overview' => na('/DDWT18/week2/overview/', False),
-        $serie_info['name'] => na('/DDWT18/week2/serie/?serie_id='.$serie_id, True)
-    ]);
-    $navigation = get_navigation($navigation_elements, 0);
+    /* Update serie to database */
+    $feedback = update_serie($db, $_POST);
 
-    /* Page content */
-    $page_subtitle = sprintf("Information about %s", $serie_info['name']);
-    $page_content = $serie_info['abstract'];
-    $nbr_seasons = $serie_info['seasons'];
-    $creators = $serie_info['creator'];
-
-    /* Choose Template */
-    include use_template('serie');
+    /* Redirect to serie GET route */
+    redirect(sprintf('/DDWT18/week2/serie/?serie_id%s?error_msg=%s', $serie_id, json_encode($feedback)));
 }
 
 /* Remove serie */
