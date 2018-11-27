@@ -205,6 +205,99 @@ elseif (new_route('/DDWT18/week2/remove/', 'post')) {
     redirect(sprintf('/DDWT18/week2/overview/?error_msg=%s', json_encode($feedback)));
 }
 
+/* My account GET */
+elseif (new_route('/DDWT18/week2/myaccount', 'get')) {
+    /* Page info */
+    $page_title = 'My account';
+    $breadcrumbs = get_breadcrumbs([
+        'DDWT18' => na('/DDWT18/', False),
+        'Week 2' => na('/DDWT18/week2/', False),
+        'My account' => na('/DDWT18/week2/myaccount/', True)
+    ]);
+    $navigation = get_navigation($navigation_elements, 4);
+
+    /* Page content */
+    $page_subtitle = 'Your account.';
+    $page_content = 'Here you can see what series you added and more information about your account.';
+
+    /* Get error message from POST route */
+    if ( isset($_GET['error_msg'])) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
+    /* Choose Template */
+    include use_template('account');
+}
+
+/* Register GET */
+elseif (new_route('/DDWT18/week2/register', 'get')) {
+    /* Page info */
+    $page_title = 'Register';
+    $breadcrumbs = get_breadcrumbs([
+        'DDWT18' => na('/DDWT18/', False),
+        'Week 2' => na('/DDWT18/week2/', False),
+        'Register' => na('/DDWT18/week2/register/', True)
+    ]);
+    $navigation = get_navigation($navigation_elements, 4);
+
+    /* Page content */
+    $page_subtitle = 'Fill in your details here to register for an account.';
+
+    /* Get error message from POST route */
+    if ( isset($_GET['error_msg'])) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
+    /* Choose Template */
+    include use_template('register');
+}
+
+/* Register POST */
+elseif (new_route('/DDWT18/week2/register', 'post')) {
+    /* Register user to database */
+    $feedback = register_user($db, $_POST);
+
+    /* Redirect to serie GET route */
+    redirect(sprintf('/DDWT18/week2/myaccount/?error_msg=%s', json_encode($feedback)));
+}
+
+/* Login GET */
+elseif (new_route('/DDWT18/week2/login', 'get')) {
+    /* Page info */
+    $page_title = 'Login';
+    $breadcrumbs = get_breadcrumbs([
+        'DDWT18' => na('/DDWT18/', False),
+        'Week 2' => na('/DDWT18/week2/', False),
+        'Login' => na('/DDWT18/week2/login/', True)
+    ]);
+    $navigation = get_navigation($navigation_elements, 0);
+
+    /* Page content */
+    $page_subtitle = 'Fill in your details here to login to your account.';
+
+    /* Get error message from POST route */
+    if ( isset($_GET['error_msg'])) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
+    /* Choose Template */
+    include use_template('login');
+}
+
+/* Login POST */
+elseif (new_route('/DDWT18/week2/login', 'post')) {
+    /* Register user to database */
+    $feedback = login_user($db, $_POST);
+
+    /* Redirect to serie GET route */
+    redirect(sprintf('/DDWT18/week2/myaccount/?error_msg=%s', json_encode($feedback)));
+}
+
+/* Logout GET */
+elseif (new_route('/DDWT18/week2/logout', 'get')) {
+    
+}
+
 else {
     http_response_code(404);
 }
