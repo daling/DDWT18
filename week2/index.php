@@ -54,6 +54,11 @@ if (new_route('/DDWT18/week2/', 'get')) {
     $page_subtitle = 'The online platform to list your favorite series';
     $page_content = 'On Series Overview you can list your favorite series. You can see the favorite series of all Series Overview users. By sharing your favorite series, you can get inspired by others and explore new series.';
 
+    /* Get error message from POST route */
+    if ( isset($_GET['error_msg'])) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
+
     /* Choose Template */
     include use_template('main');
 }
@@ -247,7 +252,7 @@ elseif (new_route('/DDWT18/week2/myaccount', 'get')) {
     $navigation = get_navigation($navigation_elements, 4);
 
     /* Page content */
-    $page_subtitle = 'Your account.';
+    $page_subtitle = sprintf('Hello %s!', get_user_name($db, $_SESSION['user_id']));
     $page_content = 'Here you can see what series you added and more information about your account.';
 
     /* Get error message from POST route */
@@ -330,7 +335,7 @@ elseif (new_route('/DDWT18/week2/login', 'post')) {
 
 /* Logout GET */
 elseif (new_route('/DDWT18/week2/logout', 'get')) {
-
+    logout_user();
 }
 
 else {

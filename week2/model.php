@@ -177,7 +177,7 @@ function login_user($pdo, $form_data) {
         $_SESSION['user_id'] = $user_info['id'];
         $feedback = [
             'type' => 'success',
-            'message' => sprintf('%s, you were logged in successfully!', get_username($pdo, $_SESSION['user_id']))
+            'message' => sprintf('%s, you were logged in successfully!', get_user_name($pdo, $_SESSION['user_id']))
         ];
         redirect(sprintf('/DDWT18/week2/myaccount/?error_msg=%s', json_encode($feedback)));
     }
@@ -194,6 +194,19 @@ function check_login(){
     } else {
         return False;
     }
+}
+
+/**
+ * Logs user out by destroying the session.
+ */
+function logout_user(){
+    session_start();
+    session_destroy();
+    $feedback = [
+        'type' => 'success',
+        'message' => 'You have been successfully logged out.'
+    ];
+    redirect(sprintf('/DDWT18/week2/?error_msg=%s', json_encode($feedback)));
 }
 
 /**
