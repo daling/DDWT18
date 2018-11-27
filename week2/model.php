@@ -130,6 +130,13 @@ function register_user($pdo, $form_data){
     redirect(sprintf('/DDWT18/week2/myaccount/?error_msg=%s', json_encode($feedback)));
 }
 
+/**
+ * Logs the user in. Checks if all fields are set, if the username exists in the db, checks the password
+ * and logs the user in.
+ * @param object $pdo database object
+ * @param array $form_data user login information from the form
+ * @return array error message
+ */
 function login_user($pdo, $form_data) {
     /* Check if all fields are set */
     if (
@@ -173,6 +180,19 @@ function login_user($pdo, $form_data) {
             'message' => sprintf('%s, you were logged in successfully!', get_username($pdo, $_SESSION['user_id']))
         ];
         redirect(sprintf('/DDWT18/week2/myaccount/?error_msg=%s', json_encode($feedback)));
+    }
+}
+
+/**
+ * Checks whether or not if the user is logged in.
+ * @return bool True if user logged in, else false.
+ */
+function check_login(){
+    session_start();
+    if (isset($_SESSION['user_id'])){
+        return True;
+    } else {
+        return False;
     }
 }
 

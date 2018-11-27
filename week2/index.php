@@ -117,6 +117,11 @@ elseif (new_route('/DDWT18/week2/serie/', 'get')) {
 
 /* Add serie GET */
 elseif (new_route('/DDWT18/week2/add/', 'get')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/DDWT18/week2/login/');
+    }
+
     /* Page info */
     $page_title = 'Add Series';
     $breadcrumbs = get_breadcrumbs([
@@ -143,6 +148,11 @@ elseif (new_route('/DDWT18/week2/add/', 'get')) {
 
 /* Add serie POST */
 elseif (new_route('/DDWT18/week2/add/', 'post')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/DDWT18/week2/login/');
+    }
+
     /* Add serie to database */
     $feedback = add_serie($db, $_POST);
 
@@ -152,6 +162,11 @@ elseif (new_route('/DDWT18/week2/add/', 'post')) {
 
 /* Edit serie GET */
 elseif (new_route('/DDWT18/week2/edit/', 'get')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/DDWT18/week2/login/');
+    }
+
     /* Get serie info from db */
     $serie_id = $_GET['serie_id'];
     $serie_info = get_serieinfo($db, $serie_id);
@@ -182,6 +197,11 @@ elseif (new_route('/DDWT18/week2/edit/', 'get')) {
 
 /* Edit serie POST */
 elseif (new_route('/DDWT18/week2/edit/', 'post')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/DDWT18/week2/login/');
+    }
+
     /* Get serie info from db */
     $serie_id = $_POST['serie_id'];
 
@@ -195,6 +215,11 @@ elseif (new_route('/DDWT18/week2/edit/', 'post')) {
 
 /* Remove serie */
 elseif (new_route('/DDWT18/week2/remove/', 'post')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/DDWT18/week2/login/');
+    }
+
     /* Get serie id from POST */
     $serie_id = $_POST['serie_id'];
 
@@ -207,6 +232,11 @@ elseif (new_route('/DDWT18/week2/remove/', 'post')) {
 
 /* My account GET */
 elseif (new_route('/DDWT18/week2/myaccount', 'get')) {
+    /* Check if logged in */
+    if ( !check_login() ) {
+        redirect('/DDWT18/week2/login/');
+    }
+
     /* Page info */
     $page_title = 'My account';
     $breadcrumbs = get_breadcrumbs([
@@ -263,6 +293,11 @@ elseif (new_route('/DDWT18/week2/register', 'post')) {
 
 /* Login GET */
 elseif (new_route('/DDWT18/week2/login', 'get')) {
+    /* Check if logged in */
+    if ( check_login() ) {
+        redirect('/DDWT18/week2/myaccount/');
+    }
+
     /* Page info */
     $page_title = 'Login';
     $breadcrumbs = get_breadcrumbs([
