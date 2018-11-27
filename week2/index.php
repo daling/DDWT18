@@ -258,7 +258,7 @@ elseif (new_route('/DDWT18/week2/register', 'post')) {
     $feedback = register_user($db, $_POST);
 
     /* Redirect to serie GET route */
-    redirect(sprintf('/DDWT18/week2/myaccount/?error_msg=%s', json_encode($feedback)));
+    redirect(sprintf('/DDWT18/week2/register/?error_msg=%s', json_encode($feedback)));
 }
 
 /* Login GET */
@@ -295,7 +295,7 @@ elseif (new_route('/DDWT18/week2/login', 'post')) {
 
 /* Logout GET */
 elseif (new_route('/DDWT18/week2/logout', 'get')) {
-    
+
 }
 
 else {

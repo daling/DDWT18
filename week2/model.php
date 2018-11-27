@@ -68,6 +68,61 @@ function get_user_name($pdo, $id){
     return implode(" ", $username);
 }
 
+function register_user($pdo, $form_data){
+    /* Check if fields are set */
+    if (
+        empty($form_data['username']) or
+        empty($form_data['password']) or
+        empty($form_data['firstname']) or
+        empty($form_data['lastname'])
+    ) {
+        return [
+            'type' => 'danger',
+            'message' => 'You should enter a username, password, first- and last name.'
+        ];
+    }
+    /* Check if username already exists */
+    try {
+        $stmt = $pdo->prepare('SELECT * FROM users WHERE username = ?');
+        $stmt->execute([$form_data['username']]);
+        $user_exists = $stmt->rowCount();
+    } catch (\PDOException $e) {
+        return [
+            'type' => 'danger',
+            'message' => sprintf('There was an error: %s', $e->getMessage())
+        ];
+    }
+    /* Return error if username exists */
+    if ( !empty($user_exists) ){
+        return [
+            'type' => 'danger',
+            'message' => 'This username already exists.'
+        ];
+    }
+    /* Hash password */
+    $password = password_hash($form_data['password'], PASSWORD_DEFAULT);
+
+    /* Save user to db */
+    try {
+        $stmt = $pdo->prepare('INSERT INTO users (username, password, firstname, lastname) VALUES (?, ?, ?, ?)');
+        $stmt->execute([$form_data['username'], $password, $form_data['firstname'], $form_data['lastname']]);
+        $user_id = $pdo->lastInsertId();
+    } catch (PDOException $e) {
+        return [
+            'type' => 'danger',
+            'message' => sprintf('There was an error: %s', $e->getMessage())
+        ];
+    }
+    /* Login user and redirect */
+    session_start();
+    $_SESSION['user_id'] = $user_id;
+    $feedback = [
+        'type' => 'success',
+        'message' => sprintf('%s, your account was successfully created!', get_user_name($pdo, $_SESSION['user_id']))
+    ];
+    redirect(sprintf('/DDWT18/week2/myaccount/?error_msg=%s', json_encode($feedback)));
+}
+
 /**
  * Creates a new navigation array item using url and active status
  * @param string $url The url of the navigation item
