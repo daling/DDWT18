@@ -104,6 +104,7 @@ elseif (new_route('/DDWT18/week2/serie/', 'get')) {
     $page_content = $serie_info['abstract'];
     $nbr_seasons = $serie_info['seasons'];
     $creators = $serie_info['creator'];
+    $added_by = get_user_name($db, $serie_id);
 
     /* Get error message from POST route */
     if ( isset($_GET['error_msg'])) {

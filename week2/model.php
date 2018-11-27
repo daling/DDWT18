@@ -53,19 +53,19 @@ function new_route($route_uri, $request_type){
 /**
  * Gets the users first and lastname from the db by its series id in the series table.
  */
-function get_username($pdo, $id){
+function get_user_name($pdo, $id){
     try {
         $stmt = $pdo->prepare('SELECT * FROM users WHERE id = ?');
         $stmt->execute([$id]);
         $user = $stmt->fetch();
-        $username = ['firstname' => $user['firstname'], 'lastname' => $user['lastname']];
+        $username = [$user['firstname'], $user['lastname']];
     } catch (\PDOException $e) {
         return [
             'type' => 'danger',
             'message' => sprintf('There was an error: %s', $e->getMessage())
         ];
     }
-    return $username;
+    return implode(" ", $username);
 }
 
 /**
@@ -161,12 +161,12 @@ function get_serie_table($pdo, $series){
     </thead>
     <tbody>';
     foreach($series as $key => $value){
-        $user = get_username($pdo, $value['id']);
+        $user = get_user_name($pdo, $value['id']);
         $table_exp .= '
         <tr>
             <th scope="row">'.$value['name'].'</th>
             <td><a href="/DDWT18/week2/serie/?serie_id='.$value['id'].'" role="button" class="btn btn-primary">More info</a></td>
-            <td>'.$user['firstname'].' '.$user['lastname'].'</td>
+            <td>'.$user.'</td>
         </tr>
         ';
     }
