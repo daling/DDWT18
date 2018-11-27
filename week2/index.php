@@ -290,7 +290,7 @@ elseif (new_route('/DDWT18/week2/login', 'post')) {
     $feedback = login_user($db, $_POST);
 
     /* Redirect to serie GET route */
-    redirect(sprintf('/DDWT18/week2/myaccount/?error_msg=%s', json_encode($feedback)));
+    redirect(sprintf('/DDWT18/week2/login/?error_msg=%s', json_encode($feedback)));
 }
 
 /* Logout GET */
