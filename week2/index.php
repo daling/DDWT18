@@ -71,6 +71,10 @@ elseif (new_route('/DDWT18/week2/overview/', 'get')) {
     $page_content = 'Here you find all series listed on Series Overview.';
     $left_content = get_serie_table($db, get_series($db));
 
+    /* Get error message from POST route */
+    if ( isset($_GET['error_msg'])) {
+        $error_msg = get_error($_GET['error_msg']);
+    }
 
     /* Choose Template */
     include use_template('main');
@@ -181,17 +185,20 @@ elseif (new_route('/DDWT18/week2/edit/', 'post')) {
     $feedback = update_serie($db, $_POST);
 
     /* Redirect to serie GET route */
-    redirect(sprintf('/DDWT18/week2/serie/?serie_id='.$nbr_series.'?error_msg=%s', json_encode($feedback)));
+    redirect(sprintf('/DDWT18/week2/serie/?serie_id='.$serie_id.'?error_msg=%s', json_encode($feedback)));
+    /* TODO: show error msg after updating, step 5.5 */
 }
 
 /* Remove serie */
 elseif (new_route('/DDWT18/week2/remove/', 'post')) {
-    /* Update serie to database */
-    $feedback = remove_serie($db, $_POST);
+    /* Get serie id from POST */
+    $serie_id = $_POST['serie_id'];
+
+    /* Remove serie from database */
+    $feedback = remove_serie($db, $serie_id);
 
     /* Redirect to serie GET route */
     redirect(sprintf('/DDWT18/week2/overview/?error_msg=%s', json_encode($feedback)));
-
 }
 
 else {
