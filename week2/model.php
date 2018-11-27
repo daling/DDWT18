@@ -54,10 +54,17 @@ function new_route($route_uri, $request_type){
  * Gets the users first and lastname from the db by its series id in the series table.
  */
 function get_username($pdo, $id){
-    $stmt = $pdo->prepare('SELECT * FROM users WHERE id = ?');
-    $stmt->execute([$id]);
-    $user = $stmt->fetch();
-    $username = ['firstname' => $user['firstname'], 'lastname' => $user['lastname']];
+    try {
+        $stmt = $pdo->prepare('SELECT * FROM users WHERE id = ?');
+        $stmt->execute([$id]);
+        $user = $stmt->fetch();
+        $username = ['firstname' => $user['firstname'], 'lastname' => $user['lastname']];
+    } catch (\PDOException $e) {
+        return [
+            'type' => 'danger',
+            'message' => sprintf('There was an error: %s', $e->getMessage())
+        ];
+    }
     return $username;
 }
 
@@ -142,6 +149,7 @@ function get_navigation($template, $active_id){
  * @param array $series with series from the db
  * @return string
  */
+/* TODO: show username for not only the first instance. */
 function get_serie_table($pdo, $series){
     $table_exp = '
     <table class="table table-hover">
@@ -397,7 +405,7 @@ function remove_serie($pdo, $serie_id){
 /**
  * Count the number of series listed on Series Overview
  * @param object $pdo database object
- * @return mixed
+ * @return int $series number of seris
  */
 function count_series($pdo){
     /* Get series */
@@ -405,6 +413,18 @@ function count_series($pdo){
     $stmt->execute();
     $series = $stmt->rowCount();
     return $series;
+}
+
+/**
+ * Count the number of users listed in the database
+ * @param object $pdo database object
+ * @return int $users number of users
+ */
+function count_users($pdo){
+    $stmt = $pdo->prepare('SELECT * FROM users');
+    $stmt->execute();
+    $users = $stmt->rowCount();
+    return $users;
 }
 
 /**
