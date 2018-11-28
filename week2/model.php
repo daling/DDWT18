@@ -57,7 +57,8 @@ function get_user_name($pdo, $id){
     try {
         $stmt = $pdo->prepare('SELECT users.firstname, users.lastname FROM users INNER JOIN series ON users.id = series.user WHERE series.id = ?');
         $stmt->execute([$id]);
-        $username = $stmt->fetch();
+        $user = $stmt->fetch();
+        $username = [$user['firstname'], $user['lastname']];
     } catch (\PDOException $e) {
         return [
             'type' => 'danger',
@@ -122,9 +123,10 @@ function register_user($pdo, $form_data){
     /* Login user and redirect */
     session_start();
     $_SESSION['user_id'] = $user_id;
+    $_SESSION['name'];
     $feedback = [
         'type' => 'success',
-        'message' => sprintf('%s, your account was successfully created!', get_user_name($pdo, $_SESSION['user_id']))
+        'message' => sprintf('%s, your account was successfully created!', $_SESSION['name'])
     ];
     redirect(sprintf('/DDWT18/week2/myaccount/?error_msg=%s', json_encode($feedback)));
 }
@@ -174,9 +176,10 @@ function login_user($pdo, $form_data) {
     } else {
         session_start();
         $_SESSION['user_id'] = $user_info['id'];
+        $_SESSION['name'] = $user_info['firstname'];
         $feedback = [
             'type' => 'success',
-            'message' => sprintf('%s, you were logged in successfully!', get_user_name($pdo, $_SESSION['user_id']))
+            'message' => sprintf('%s, you were logged in successfully!', $_SESSION['name'])
         ];
         redirect(sprintf('/DDWT18/week2/myaccount/?error_msg=%s', json_encode($feedback)));
     }
@@ -488,15 +491,22 @@ function update_serie($pdo, $serie_info){
         ];
     }
 
+    /* Check who added the series */
+    if ( $serie['user'] == get_user_id() ) {
+        return [
+            'type' => 'danger',
+            'message' => sprintf("You are not allowed to edit this, since this series was added by %s", $serie['name'])
+        ];
+    }
+
     /* Update Serie */
-    $stmt = $pdo->prepare("UPDATE series SET name = ?, creator = ?, seasons = ?, abstract = ?, user = ? WHERE id = ?");
+    $stmt = $pdo->prepare("UPDATE series SET name = ?, creator = ?, seasons = ?, abstract = ? WHERE id = ?");
     $stmt->execute([
         $serie_info['Name'],
         $serie_info['Creator'],
         $serie_info['Seasons'],
         $serie_info['Abstract'],
-        $serie_info['serie_id'],
-        $_SESSION['user_id']
+        $serie_info['serie_id']
     ]);
     $updated = $stmt->rowCount();
     if ($updated ==  1) {
@@ -522,6 +532,14 @@ function update_serie($pdo, $serie_info){
 function remove_serie($pdo, $serie_id){
     /* Get series info */
     $serie_info = get_serieinfo($pdo, $serie_id);
+
+    /* Check who added the series */
+    if ( $serie_info['user'] == get_user_id() ) {
+        return [
+            'type' => 'danger',
+            'message' => sprintf("You are not allowed to delete this, since this series was added by %s", $serie_info['user'])
+        ];
+    }
 
     /* Delete Serie */
     $stmt = $pdo->prepare("DELETE FROM series WHERE id = ?");
@@ -580,7 +598,6 @@ function redirect($location){
  * @return bool current user id or False if not logged in
  */
 function get_user_id(){
-    session_start();
     if (isset($_SESSION['user_id'])){
         return $_SESSION['user_id'];
     } else {

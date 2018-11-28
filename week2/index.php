@@ -111,6 +111,13 @@ elseif (new_route('/DDWT18/week2/serie/', 'get')) {
     $creators = $serie_info['creator'];
     $added_by = get_user_name($db, $serie_id);
 
+    /* Check if session user added the series */
+    if ( $serie_info['user'] == get_user_id() ) {
+        $display_buttons = True;
+    } else {
+        $display_buttons = False;
+    }
+
     /* Get error message from POST route */
     if ( isset($_GET['error_msg'])) {
         $error_msg = get_error($_GET['error_msg']);
@@ -252,7 +259,7 @@ elseif (new_route('/DDWT18/week2/myaccount', 'get')) {
     $navigation = get_navigation($navigation_elements, 4);
 
     /* Page content */
-    $page_subtitle = sprintf('Hello %s!', get_user_name($db, $_SESSION['user_id']));
+    $page_subtitle = sprintf('Hello %s!', $_SESSION['name']);
     $page_content = 'Here you can see what series you added and more information about your account.';
 
     /* Get error message from POST route */
