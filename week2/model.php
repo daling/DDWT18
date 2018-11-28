@@ -55,10 +55,9 @@ function new_route($route_uri, $request_type){
  */
 function get_user_name($pdo, $id){
     try {
-        $stmt = $pdo->prepare('SELECT * FROM users WHERE id = ?');
+        $stmt = $pdo->prepare('SELECT users.firstname, users.lastname FROM users INNER JOIN series ON users.id = series.user WHERE series.id = ?');
         $stmt->execute([$id]);
-        $user = $stmt->fetch();
-        $username = [$user['firstname'], $user['lastname']];
+        $username = $stmt->fetch();
     } catch (\PDOException $e) {
         return [
             'type' => 'danger',
@@ -290,7 +289,6 @@ function get_navigation($template, $active_id){
  * @param array $series with series from the db
  * @return string
  */
-/* TODO: show username for not only the first instance. */
 function get_serie_table($pdo, $series){
     $table_exp = '
     <table class="table table-hover">
@@ -427,7 +425,7 @@ function add_serie($pdo, $serie_info){
         $serie_info['Creator'],
         $serie_info['Seasons'],
         $serie_info['Abstract'],
-        1
+        $_SESSION['user_id']
     ]);
     $inserted = $stmt->rowCount();
     if ($inserted ==  1) {
@@ -491,13 +489,14 @@ function update_serie($pdo, $serie_info){
     }
 
     /* Update Serie */
-    $stmt = $pdo->prepare("UPDATE series SET name = ?, creator = ?, seasons = ?, abstract = ? WHERE id = ?");
+    $stmt = $pdo->prepare("UPDATE series SET name = ?, creator = ?, seasons = ?, abstract = ?, user = ? WHERE id = ?");
     $stmt->execute([
         $serie_info['Name'],
         $serie_info['Creator'],
         $serie_info['Seasons'],
         $serie_info['Abstract'],
-        $serie_info['serie_id']
+        $serie_info['serie_id'],
+        $_SESSION['user_id']
     ]);
     $updated = $stmt->rowCount();
     if ($updated ==  1) {
