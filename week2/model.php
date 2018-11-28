@@ -197,7 +197,7 @@ function check_login(){
 }
 
 /**
- * Logs user out by destroying the session.
+ * Logs user out by destroying the session. Redirects to the landing page with the correct feedback.
  */
 function logout_user(){
     session_start();
@@ -368,10 +368,9 @@ function get_serieinfo($pdo, $serie_id){
 }
 
 /**
- * Creats HTML alert code with information about the success or failure
- * @param bool $type True if success, False if failure
- * @param string $message Error/Success message
- * @return string
+ * Creates HTML alert code with information about the success or failure
+ * @param array $feedback Array with the type of error and the message.
+ * @return string HTML alert code
  */
 function get_error($feedback){
     $feedback = json_decode($feedback, True);
