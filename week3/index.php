@@ -29,17 +29,28 @@ $router->mount('/api', function() use ($router, $db) {
         echo 'This is an API.';
     });
 
-    // will result in '/series/'
+    /* GET for reading all series */
     $router->get('/series', function() use ($db) {
         $series = get_series($db);
         $series_json = json_encode($series);
         echo $series_json;
     });
 
-    // will result in '/series/id'
-    $router->get('/(\d+)', function($id) {
-        echo 'movie id ' . htmlentities($id);
+    // GET for reading individual series */
+    $router->get('/series/(\d+)', function($id) use ($db) {
+        $series = get_serieinfo($db, $id);
+        $series_json = json_encode($series);
+        echo $series_json;
     });
+
+    // GET for deleting individual series */
+    $router->get('/series/remove/(\d+)', function($id) use ($db) {
+        $feedback = remove_serie($db, $id);
+        $feedback_json = json_encode($feedback);
+        echo $feedback_json;
+    });
+
+
 });
 
 /* 404 code */
