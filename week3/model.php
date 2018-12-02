@@ -36,6 +36,14 @@ function connect_db($host, $db, $user, $pass){
 }
 
 /**
+ * Setting the http content type to the
+ * @param string $content_type The type of content set in the header.
+ */
+function http_content_type($content_type) {
+    header(sprintf('Content-Type: %s', $content_type));
+}
+
+/**
  * Pretty Print Array
  * @param $input
  */

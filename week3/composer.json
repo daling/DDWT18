@@ -1,0 +1,15 @@
+{
+  "name": "daling/DDWT18_week3",
+  "description": "",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Rolf Daling",
+      "email": "r.p.daling@student.rug.nl"
+    }
+  ],
+  "require": {
+    "bramus/router": "1.3"
+  }
+}
