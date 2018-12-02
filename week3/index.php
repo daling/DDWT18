@@ -24,9 +24,16 @@ $router = new \Bramus\Router\Router();
 $router->mount('/api', function() use ($router, $db) {
     http_content_type("application/json");
 
+    // will result in some usage information about the API
+    $router->get('/', function() {
+        echo 'This is an API.';
+    });
+
     // will result in '/series/'
-    $router->get('/', function() use ($db) {
-        echo 'series overview';
+    $router->get('/series', function() use ($db) {
+        $series = get_series($db);
+        $series_json = json_encode($series);
+        echo $series_json;
     });
 
     // will result in '/series/id'
