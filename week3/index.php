@@ -52,13 +52,18 @@ $router->mount('/api', function() use ($router, $db) {
 
     /* POST for adding individual series */
     $router->post('/series/add', function() use ($db) {
-        $serie_info = [
-            'Name' => $_POST['name'],
-            'Creator' => $_POST['creator'],
-            'Seasons' => $_POST['seasons'],
-            'Abstract' => $_POST['abstract']
-        ];
-        $feedback = add_serie($db, $serie_info);
+        $feedback = add_serie($db, $_POST);
+        $feedback_json = json_encode($feedback);
+        echo $feedback_json;
+    });
+
+    /* PUT for updating individual series */
+    $router->put('/series/(\d+)', function($id) use ($db) {
+        $_PUT = array();
+        parse_str(file_get_contents('php://input'),$_PUT);
+
+        $serie_info = $_PUT + ["serie_id" => $id];
+        $feedback = update_serie($db, $serie_info);
         $feedback_json = json_encode($feedback);
         echo $feedback_json;
     });
