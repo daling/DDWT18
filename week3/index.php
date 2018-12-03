@@ -36,20 +36,32 @@ $router->mount('/api', function() use ($router, $db) {
         echo $series_json;
     });
 
-    // GET for reading individual series */
+    /* GET for reading individual series */
     $router->get('/series/(\d+)', function($id) use ($db) {
         $series = get_serieinfo($db, $id);
         $series_json = json_encode($series);
         echo $series_json;
     });
 
-    // GET for deleting individual series */
-    $router->get('/series/remove/(\d+)', function($id) use ($db) {
+    /* DELETE for deleting individual series */
+    $router->delete('/series/(\d+)', function($id) use ($db) {
         $feedback = remove_serie($db, $id);
         $feedback_json = json_encode($feedback);
         echo $feedback_json;
     });
 
+    /* POST for adding individual series */
+    $router->post('/series/add', function() use ($db) {
+        $serie_info = [
+            'Name' => $_POST['name'],
+            'Creator' => $_POST['creator'],
+            'Seasons' => $_POST['seasons'],
+            'Abstract' => $_POST['abstract']
+        ];
+        $feedback = add_serie($db, $serie_info);
+        $feedback_json = json_encode($feedback);
+        echo $feedback_json;
+    });
 
 });
 
