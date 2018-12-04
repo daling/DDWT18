@@ -18,15 +18,35 @@ $db = connect_db('localhost', 'ddwt18_week3', 'ddwt18', 'ddwt18');
 /* Create Router instance */
 $router = new \Bramus\Router\Router();
 
-// Add routes here
+/* Set the credentials */
+$cred = set_cred('ddwt18', 'ddwt18');
+
+/* Authentication */
+$router->before('GET|POST|PUT|DELETE', '/api/.*', function() use ($cred){
+    if (!check_cred($cred)){
+        http_response_code(401);
+        $feedback = [
+            'type' => 'danger',
+            'message' => 'Authentication required. Credentials incorrect.'
+        ];
+        $feedback_json = json_encode($feedback);
+        echo $feedback_json;
+        exit();
+    }
+});
 
 /* Mount */
 $router->mount('/api', function() use ($router, $db) {
     http_content_type("application/json");
 
-    // will result in some usage information about the API
+    /* Some usage information about the API */
     $router->get('/', function() {
-        echo 'This is an API.';
+        $feedback = [
+            'type' => 'info',
+            'message' => 'This is an api for the series overview. You can get all series, individual series by id, delete series and update series.'
+        ];
+        $feedback_json = json_encode($feedback);
+        echo $feedback_json;
     });
 
     /* GET for reading all series */
@@ -51,7 +71,7 @@ $router->mount('/api', function() use ($router, $db) {
     });
 
     /* POST for adding individual series */
-    $router->post('/series/add', function() use ($db) {
+    $router->post('/series/', function() use ($db) {
         $feedback = add_serie($db, $_POST);
         $feedback_json = json_encode($feedback);
         echo $feedback_json;
@@ -73,7 +93,12 @@ $router->mount('/api', function() use ($router, $db) {
 /* 404 code */
 $router->set404(function() {
     header('404 Page Not Found');
-    echo '404';
+    $feedback = [
+        'type' => 'danger',
+        'message' => 'Page not found.'
+    ];
+    $feedback_json = json_encode($feedback);
+    echo $feedback_json;
 });
 
 

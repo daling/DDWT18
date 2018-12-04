@@ -59,7 +59,7 @@ function set_cred($username, $password) {
 /**
  * Check the credentials.
  * @param array $cred Username and password
- * @return bool True if username and password are correct
+ * @return bool True if credentials correct, else false
  */
 function check_cred($cred) {
     if (!isset($_SERVER['PHP_AUTH_USER'])) {
