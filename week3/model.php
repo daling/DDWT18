@@ -44,6 +44,41 @@ function http_content_type($content_type) {
 }
 
 /**
+ * Creates an associative array of the username and password
+ * @param $username
+ * @param $password
+ * @return array
+ */
+function set_cred($username, $password) {
+    return [
+        'username' => $username,
+        'password' => $password
+    ];
+}
+
+/**
+ * Check the credentials.
+ * @param array $cred Username and password
+ * @return bool True if username and password are correct
+ */
+function check_cred($cred) {
+    if (!isset($_SERVER['PHP_AUTH_USER'])) {
+        return False;
+    }
+    else {
+        if ($_SERVER['PHP_AUTH_USER'] != $cred['username']){
+            return False;
+        }
+        elseif ($_SERVER['PHP_AUTH_PW'] != $cred['password']){
+            return False;
+        }
+        else {
+            return True;
+        }
+    }
+}
+
+/**
  * Pretty Print Array
  * @param $input
  */
